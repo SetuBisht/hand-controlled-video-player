@@ -1,9 +1,13 @@
-import React, { useState, useRef } from 'react';
-import './index.css'; // Import your CSS file for styling
+import React, { useState, useRef, useEffect } from 'react';
+import './index.css';
+import WebCaM from '../webcam';
+
 
 const VideoPlayer = () => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -28,6 +32,7 @@ const VideoPlayer = () => {
   };
 
   const handlePlayPauseClick = () => {
+    if(!videoRef.current.src) return
     if (videoRef.current.paused) {
       videoRef.current.play();
       setIsPlaying(true);
@@ -36,6 +41,18 @@ const VideoPlayer = () => {
       setIsPlaying(false);
     }
   };
+  const handleVideo = (ges) => {
+  
+    if(ges===undefined) return
+    if (ges === "open") {
+       videoRef.current.play();
+      setIsPlaying(true);
+    }
+    if (ges === "close") {
+      videoRef.current.pause();
+      setIsPlaying(false)
+    }
+  }
 
   return (
     <div className="video-player-container">
@@ -44,11 +61,7 @@ const VideoPlayer = () => {
         onDrop={handleDrop}
         onDragOver={(event) => event.preventDefault()}
       >
-        <video
-          ref={videoRef}
-          onClick={handlePlayPauseClick}
-          className="video"
-        ></video>
+        <video ref={videoRef} className="video"></video>
         <div className="overlay">
           {isPlaying ? (
             <button className="pause-btn" onClick={handlePlayPauseClick}>
@@ -67,6 +80,7 @@ const VideoPlayer = () => {
         onChange={handleUpload}
         className="upload-btn"
       />
+      <WebCaM handleVideo={handleVideo} />
     </div>
   );
 };
